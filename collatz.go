@@ -1,5 +1,7 @@
 package collatz
 
+import "fmt"
+
 // The Collatz conjecture states that the hailstone
 // sequence of every positive number reaches 1
 // if we execute the Collatz process on `x = 10`, then we get the
@@ -24,9 +26,21 @@ func Collatz(x int) (hailstone []int, err error) {
 }
 
 func Even(x int) (int, error) {
+	if x <= 0 {
+		return 0, fmt.Errorf("%d is not positive", x)
+	}
+	if x%2 != 0 {
+		return 0, fmt.Errorf("%d is not even", x)
+	}
 	return x / 2, nil
 }
 
 func Odd(x int) (int, error) {
+	if x <= 0 {
+		return 0, fmt.Errorf("%d is not positive", x)
+	}
+	if x%2 == 0 {
+		return 0, fmt.Errorf("%d is not odd", x)
+	}
 	return 3*x + 1, nil
 }

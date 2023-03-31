@@ -3,9 +3,12 @@ package collatz
 import (
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestCollatz(t *testing.T) {
+	// TODO: Change to table driven tests
 	hailstone, err := Collatz(10)
 	if err != nil {
 		t.Error(err)
@@ -17,22 +20,48 @@ func TestCollatz(t *testing.T) {
 }
 
 func TestEven(t *testing.T) {
-	got, err := Even(10)
-	if err != nil {
-		t.Error(err)
+	tests := map[string]struct {
+		x       int
+		want    int
+		wantErr string
+	}{
+		"even": {
+			x:    10,
+			want: 5,
+		},
+		"zero": {
+			x:       0,
+			wantErr: "0 is not positive",
+		},
+		"negative": {
+			x:       -10,
+			wantErr: "-10 is not positive",
+		},
+		"odd": {
+			x:       11,
+			wantErr: "11 is not even",
+		},
 	}
-	want := 5
-	if got != want {
-		t.Errorf("want %v, got %v", want, got)
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			got, err := Even(tc.x)
+			if tc.wantErr != "" {
+				require.EqualError(t, err, tc.wantErr)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tc.want, got)
+			}
+		})
 	}
 }
 
 func TestOdd(t *testing.T) {
-	got, err := Odd(10)
+	// TODO: Change to table driven tests
+	got, err := Odd(11)
 	if err != nil {
 		t.Error(err)
 	}
-	want := 31
+	want := 34
 	if got != want {
 		t.Errorf("want %v, got %v", want, got)
 	}
