@@ -1,6 +1,7 @@
 package collatz
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -54,6 +55,14 @@ func BenchmarkCollatzGoRoutine(b *testing.B) {
 		_, _ = CollatzGoRoutine(1000000)
 	}
 }
+
+func ExampleCollatz() {
+	hailstone, _ := Collatz(10)
+	fmt.Println(hailstone)
+	// Output:
+	// [10 5 16 8 4 2 1]
+}
+
 func TestEven(t *testing.T) {
 	tests := map[string]struct {
 		x       int
