@@ -43,6 +43,17 @@ func TestCollatzRaceDetector(t *testing.T) {
 	}
 }
 
+func BenchmarkCollatz(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = Collatz(1000000)
+	}
+}
+
+func BenchmarkCollatzGoRoutine(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = CollatzGoRoutine(1000000)
+	}
+}
 func TestEven(t *testing.T) {
 	tests := map[string]struct {
 		x       int
