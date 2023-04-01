@@ -19,6 +19,30 @@ func TestCollatz(t *testing.T) {
 	}
 }
 
+func TestCollatzGoRoutine(t *testing.T) {
+	// TODO: Change to table driven tests
+	hailstone, err := CollatzGoRoutine(10)
+	if err != nil {
+		t.Error(err)
+	}
+	want := 7
+	if len(hailstone) != want {
+		t.Errorf("want %v, got %v", want, len(hailstone))
+	}
+}
+
+func TestCollatzRaceDetector(t *testing.T) {
+	// TODO: Change to table driven tests
+	hailstone, err := CollatzWithDataRace(10)
+	if err != nil {
+		t.Error(err)
+	}
+	want := 7
+	if len(hailstone) != want {
+		t.Errorf("want %v, got %v", want, len(hailstone))
+	}
+}
+
 func TestEven(t *testing.T) {
 	tests := map[string]struct {
 		x       int

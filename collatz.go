@@ -1,6 +1,9 @@
 package collatz
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // The Collatz conjecture states that the hailstone
 // sequence of every positive number reaches 1
@@ -22,6 +25,60 @@ func Collatz(x int) (hailstone []int, err error) {
 		}
 	}
 	hailstone = append(hailstone, x)
+	return hailstone, nil
+}
+
+func CollatzGoRoutine(x int) (hailstone []int, err error) {
+	hailstoneCh := make(chan int)
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		for xh := range hailstoneCh {
+			hailstone = append(hailstone, xh)
+		}
+		wg.Done()
+	}()
+
+	for x != 1 {
+		hailstoneCh <- x
+		if x%2 == 0 {
+			x, err = Even(x)
+		} else {
+			x, err = Odd(x)
+		}
+		if err != nil {
+			close(hailstoneCh)
+			wg.Wait()
+			return nil, err
+		}
+	}
+	hailstoneCh <- x
+	close(hailstoneCh)
+	wg.Wait()
+	return hailstone, nil
+}
+
+func CollatzWithDataRace(x int) (hailstone []int, err error) {
+	hailstoneCh := make(chan int)
+	go func() {
+		for xh := range hailstoneCh {
+			hailstone = append(hailstone, xh)
+		}
+	}()
+	for x != 1 {
+		hailstoneCh <- x
+		if x%2 == 0 {
+			x, err = Even(x)
+		} else {
+			x, err = Odd(x)
+		}
+		if err != nil {
+			close(hailstoneCh)
+			return nil, err
+		}
+	}
+	hailstoneCh <- x
+	close(hailstoneCh)
 	return hailstone, nil
 }
 
