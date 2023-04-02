@@ -63,6 +63,27 @@ func ExampleCollatz() {
 	// [10 5 16 8 4 2 1]
 }
 
+func FuzzCollatz(f *testing.F) {
+	for _, seed := range []int{10, 11, 12} {
+		f.Add(seed)
+	}
+	f.Fuzz(func(t *testing.T, x int) {
+		hailstone, err := Collatz(x)
+		if x >= 1 {
+			if err != nil {
+				t.Fatalf("%v: collatz: %v", x, err)
+			}
+			if hailstone[len(hailstone)-1] != 1 {
+				t.Fatalf("%v: collatz: last element is not 1", x)
+			}
+		} else {
+			if err == nil {
+				t.Fatalf("%v: collatz: expected error", x)
+			}
+		}
+	})
+}
+
 func TestEven(t *testing.T) {
 	tests := map[string]struct {
 		x       int
